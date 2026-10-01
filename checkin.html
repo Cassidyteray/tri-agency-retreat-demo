@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Session Check-In | 2026 Tri-Agency Board Retreat</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f4f6;
+      color: #253044;
+    }
+
+    .top-bar {
+      height: 8px;
+      background: #c7a64a;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 18px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand-small {
+      color: #6b7280;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+    }
+
+    .brand h1 {
+      margin: 8px 0 4px;
+      color: #17365d;
+      font-size: 25px;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #707782;
+      font-size: 14px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      border-top: 5px solid #c7a64a;
+    }
+
+    .checkin-label {
+      color: #c7a64a;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+    }
+
+    .session-title {
+      color: #17365d;
+      margin: 0 0 12px;
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    .session-details {
+      color: #68707c;
+      font-size: 15px;
+      line-height: 1.7;
+      padding-bottom: 20px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #303846;
+    }
+
+    select {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cfd4dc;
+      border-radius: 9px;
+      background: white;
+      font-size: 16px;
+      color: #253044;
+      margin-bottom: 14px;
+    }
+
+    .participant-info {
+      background: #f6f7f9;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    .participant-name {
+      font-weight: bold;
+      color: #17365d;
+      margin-bottom: 5px;
+    }
+
+    .participant-agency {
+      color: #68707c;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      background: #17365d;
+      color: white;
+      border-radius: 9px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.94;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .message {
+      display: none;
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 10px;
+      line-height: 1.5;
+    }
+
+    .success {
+      background: #edf7ef;
+      color: #245b2d;
+    }
+
+    .warning {
+      background: #fff7df;
+      color: #715600;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #8b2424;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #68707c;
+    }
+
+    .footer {
+      text-align: center;
+      color: #8a9099;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="top-bar"></div>
+
+<div class="page">
+
+  <div class="container">
+
+    <div class="brand">
+      <div class="brand-small">
+        St. Mary Community Action
+      </div>
+
+      <h1>2026 Tri-Agency Board Retreat</h1>
+
+      <p>October 28–30, 2026 • New Orleans, Louisiana</p>
+    </div>
+
+
+    <div class="card">
+
+      <div id="loading" class="loading">
+        Loading session...
+      </div>
+
+
+      <div id="checkinContent" style="display:none;">
+
+        <div class="checkin-label">
+          Session Check-In
+        </div>
+
+        <h2 id="sessionTitle" class="session-title">
+        </h2>
+
+        <div class="session-details">
+
+          <div id="sessionDate"></div>
+
+          <div>
+            <strong>Time:</strong>
+            <span id="sessionTime"></span>
+          </div>
+
+          <div>
+            <strong>Room:</strong>
+            <span id="sessionRoom"></span>
+          </div>
+
+        </div>
+
+
+        <label for="participantSelect">
+          Find your name
+        </label>
+
+        <select id="participantSelect">
+          <option value="">
+            Select your name
+          </option>
+        </select>
+
+
+        <div id="participantInfo" class="participant-info">
+
+          <div id="participantName"
+               class="participant-name">
+          </div>
+
+          <div id="participantAgency"
+               class="participant-agency">
+          </div>
+
+        </div>
+
+
+        <button id="checkinButton" disabled>
+          Check In
+        </button>
+
+
+        <div id="message"
+             class="message">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer">
+      Digital check-in • 2026 Tri-Agency Board Retreat
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  /*
+   * YOUR LIVE GOOGLE APPS SCRIPT BACKEND
+   */
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbxUiHC1yV4mVyLZRluWn9f4HZ4EtnHb1n-VeeysnGDl3Gufez0KN_2fsD4oJMP7LMsv/exec";
+
+
+  /*
+   * Get the session ID from the URL.
+   *
+   * Example:
+   * checkin.html?session=S101
+   */
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const sessionId =
+    params.get("session");
+
+
+  let currentSession = null;
+  let participants = [];
+  let assignments = [];
+
+
+  /*
+   * Start the page.
+   */
+  async function initializePage() {
+
+    if (!sessionId) {
+      showFatalError(
+        "No session was specified. Please scan the QR code provided at the session entrance."
+      );
+      return;
+    }
+
+
+    try {
+
+      /*
+       * Ask Google for three things at the same time:
+       *
+       * 1. This session
+       * 2. All participants
+       * 3. All assignments
+       */
+      const [
+        sessionResponse,
+        participantResponse,
+        assignmentResponse
+      ] = await Promise.all([
+
+        fetch(
+          API_URL +
+          "?action=session&sessionId=" +
+          encodeURIComponent(sessionId)
+        ),
+
+        fetch(
+          API_URL +
+          "?action=participants"
+        ),
+
+        fetch(
+          API_URL +
+          "?action=assignments"
+        )
+
+      ]);
+
+
+      const sessionResult =
+        await sessionResponse.json();
+
+      const participantResult =
+        await participantResponse.json();
+
+      const assignmentResult =
+        await assignmentResponse.json();
+
+
+      if (!sessionResult.success) {
+        throw new Error(
+          sessionResult.error ||
+          "Session could not be loaded."
+        );
+      }
+
+
+      currentSession =
+        sessionResult.data;
+
+      participants =
+        participantResult.data || [];
+
+      assignments =
+        assignmentResult.data || [];
+
+
+      renderSession();
+      renderParticipants();
+
+
+      document
+        .getElementById("loading")
+        .style.display = "none";
+
+
+      document
+        .getElementById("checkinContent")
+        .style.display = "block";
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showFatalError(
+        "We couldn't load this session. Please see a retreat staff member for assistance."
+      );
+
+    }
+
+  }
+
+
+  /*
+   * Show session information.
+   */
+  function renderSession() {
+
+    document.getElementById("sessionTitle")
+      .textContent =
+      currentSession.SessionName;
+
+
+    document.getElementById("sessionRoom")
+      .textContent =
+      currentSession.Room;
+
+
+    /*
+     * Format date.
+     */
+    const date =
+      new Date(currentSession.Date);
+
+    document.getElementById("sessionDate")
+      .innerHTML =
+      "<strong>Date:</strong> " +
+      date.toLocaleDateString(
+        "en-US",
+        {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }
+      );
+
+
+    /*
+     * Google Sheets stores time-only values
+     * using an old base date.
+     *
+     * We only display the time portion.
+     */
+    const start =
+      new Date(currentSession.StartTime);
+
+    const end =
+      new Date(currentSession.EndTime);
+
+
+    const options = {
+      hour: "numeric",
+      minute: "2-digit"
+    };
+
+
+    document.getElementById("sessionTime")
+      .textContent =
+      start.toLocaleTimeString(
+        "en-US",
+        options
+      )
+      +
+      " – "
+      +
+      end.toLocaleTimeString(
+        "en-US",
+        options
+      );
+
+  }
+
+
+  /*
+   * Only show participants assigned to
+   * THIS particular session.
+   */
+  function renderParticipants() {
+
+    const select =
+      document.getElementById(
+        "participantSelect"
+      );
+
+
+    const assignedParticipantIds =
+      assignments
+        .filter(
+          assignment =>
+            String(assignment.SessionID) ===
+            String(sessionId)
+        )
+        .map(
+          assignment =>
+            String(assignment.ParticipantID)
+        );
+
+
+    const assignedParticipants =
+      participants
+        .filter(
+          participant =>
+            assignedParticipantIds.includes(
+              String(
+                participant.ParticipantID
+              )
+            )
+        )
+        .sort(
+          (a, b) =>
+            a.LastName.localeCompare(
+              b.LastName
+            )
+        );
+
+
+    assignedParticipants.forEach(
+      participant => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          participant.ParticipantID;
+
+        option.textContent =
+          participant.FirstName +
+          " " +
+          participant.LastName +
+          " — " +
+          participant.Agency;
+
+        select.appendChild(option);
+
+      }
+    );
+
+  }
+
+
+  /*
+   * Participant selection.
+   */
+  document
+    .getElementById("participantSelect")
+    .addEventListener(
+      "change",
+      function () {
+
+        const participantId =
+          this.value;
+
+
+        const info =
+          document.getElementById(
+            "participantInfo"
+          );
+
+
+        const button =
+          document.getElementById(
+            "checkinButton"
+          );
+
+
+        if (!participantId) {
+
+          info.style.display =
+            "none";
+
+          button.disabled =
+            true;
+
+          return;
+        }
+
+
+        const participant =
+          participants.find(
+            person =>
+              String(
+                person.ParticipantID
+              ) ===
+              String(participantId)
+          );
+
+
+        if (!participant) {
+          return;
+        }
+
+
+        document
+          .getElementById(
+            "participantName"
+          )
+          .textContent =
+          participant.FirstName +
+          " " +
+          participant.LastName;
+
+
+        document
+          .getElementById(
+            "participantAgency"
+          )
+          .textContent =
+          participant.Agency;
+
+
+        info.style.display =
+          "block";
+
+        button.disabled =
+          false;
+
+      }
+    );
+
+
+  /*
+   * Check-in button.
+   */
+  document
+    .getElementById("checkinButton")
+    .addEventListener(
+      "click",
+      checkIn
+    );
+
+
+  async function checkIn() {
+
+    const participantId =
+      document.getElementById(
+        "participantSelect"
+      ).value;
+
+
+    if (!participantId) {
+      return;
+    }
+
+
+    const button =
+      document.getElementById(
+        "checkinButton"
+      );
+
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Checking In...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          API_URL,
+          {
+            method: "POST",
+
+            /*
+             * text/plain avoids an unnecessary
+             * browser preflight request for this
+             * lightweight Apps Script POC.
+             */
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify({
+              action: "checkin",
+              participantId:
+                participantId,
+              sessionId:
+                sessionId
+            })
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!result.success) {
+        throw new Error(
+          result.error ||
+          "Check-in failed."
+        );
+      }
+
+
+      const data =
+        result.data;
+
+
+      if (
+        data.status ===
+        "already_checked_in"
+      ) {
+
+        showMessage(
+          "You're already checked into this session.",
+          "warning"
+        );
+
+        button.textContent =
+          "Already Checked In";
+
+        return;
+      }
+
+
+      showMessage(
+        "✓ You're checked in! Welcome to " +
+        currentSession.SessionName +
+        ".",
+        "success"
+      );
+
+
+      button.textContent =
+        "Checked In ✓";
+
+
+      /*
+       * Prevent another accidental click.
+       */
+      document
+        .getElementById(
+          "participantSelect"
+        )
+        .disabled =
+        true;
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "We couldn't complete your check-in. Please see a retreat staff member for assistance.",
+        "error"
+      );
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "Try Again";
+
+    }
+
+  }
+
+
+  function showMessage(
+    text,
+    type
+  ) {
+
+    const message =
+      document.getElementById(
+        "message"
+      );
+
+    message.textContent =
+      text;
+
+    message.className =
+      "message " + type;
+
+    message.style.display =
+      "block";
+
+  }
+
+
+  function showFatalError(text) {
+
+    const loading =
+      document.getElementById(
+        "loading"
+      );
+
+    loading.textContent =
+      text;
+
+    loading.style.color =
+      "#8b2424";
+
+  }
+
+
+  /*
+   * GO.
+   */
+  initializePage();
+
+</script>
+
+</body>
+</html>
